@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import departmentRoutes from "./routes/departmentRoutes";
 import subjectRoutes from "./routes/subjectRoutes";
 import classRoutes from "./routes/classRoutes";
+import teacherRoutes from "./routes/teacherRoutes";
+import studentRoutes from "./routes/studentRoutes";
+import analyticsRoutes from "./routes/analyticsRoutes";
 import securityMiddleware from './middleware/security';
 import { authMiddleware } from './middleware/auth';
 import { toNodeHandler } from 'better-auth/node';
@@ -36,6 +39,9 @@ app.use(securityMiddleware);
 app.use(`/api/departments`, departmentRoutes);
 app.use(`/api/subjects`, subjectRoutes);
 app.use(`/api/classes`, classRoutes);
+app.use(`/api/teachers`, teacherRoutes);
+app.use(`/api/students`, studentRoutes);
+app.use(`/api/analytics`, analyticsRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servers is running on port ${PORT}`);

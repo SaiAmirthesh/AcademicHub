@@ -22,12 +22,12 @@ Current Phase: Decoupled API & Frontend Implementation
   - [x] Service layer, Zod validator, controller, and routes - *Complete*
   - [x] Aligned responses to code standard `{ success, data, error }` - *Complete*
 - **Teacher Directory**:
-  - [ ] Service layer, validator, controller, and routes - *Pending*
+  - [x] Service layer, validator, controller, and routes - *Complete*
 - **Student Directory & Enrollment**:
   - [x] Class Join Code enrollment endpoint (`POST /api/classes/join`) - *Complete*
-  - [ ] Student CRUD APIs (`GET /api/students`, `PUT /api/students/:id`, etc.) - *Pending*
+  - [x] Student CRUD APIs (`GET /api/students`, `PUT /api/students/:id`, etc.) - *Complete*
 - **Unified Analytics**:
-  - [ ] Analytics APIs for admin, teacher, student dashboards - *Pending*
+  - [x] Analytics APIs for admin, teacher, student dashboards - *Complete*
 
 ## Frontend Status
 
