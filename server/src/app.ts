@@ -44,5 +44,5 @@ app.use(`/api/students`, studentRoutes);
 app.use(`/api/analytics`, analyticsRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Servers is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}.`);
 });
