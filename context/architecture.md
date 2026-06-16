@@ -7,7 +7,6 @@
 - **Database**: PostgreSQL (Neon Serverless)
 - **ORM**: Drizzle ORM
 - **Auth**: Better-Auth
-- **Media Storage**: Cloudinary (avatar and class document storage)
 
 ## Boundaries
 Refine Client (Data/Auth Providers) -> REST API Endpoints -> Express Router -> Middleware (Arcjet / Better-Auth validation) -> Controllers -> Services -> Drizzle ORM Schema -> Neon PostgreSQL Database.

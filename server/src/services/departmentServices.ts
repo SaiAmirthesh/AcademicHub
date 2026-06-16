@@ -63,7 +63,7 @@ export class DepartmentService {
         return department;
     }
 
-    async updateDepartment(id:number,data:CreateDepartmentInput){
+    async updateDepartment(id:number,data: { name?: string | undefined; code?: string | undefined; description?: string | undefined }){
         const existingDepartment = await db.query.departments.findFirst({where: eq(departments.id,id)})
         if (!existingDepartment){
             throw new Error("Department not found");

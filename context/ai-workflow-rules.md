@@ -96,10 +96,6 @@ The following decisions are locked unless explicitly changed by the architect:
 * PostgreSQL
 * Drizzle ORM
 
-### Storage
-
-* Cloudinary
-
 Agents must not replace architecture decisions.
 
 ---
@@ -285,20 +281,6 @@ Rules:
 * Use migrations
 * Maintain foreign key integrity
 * Never perform destructive schema changes without documentation
-
----
-
-# Cloudinary Rules
-
-Cloudinary is the only approved file storage provider.
-
-Use Cloudinary for:
-
-* User avatars
-* Faculty profile images
-* Class documents
-
-Do not store files directly in PostgreSQL.
 
 ---
 

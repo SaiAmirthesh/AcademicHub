@@ -31,6 +31,12 @@ export class ClassController {
       const finalPage = isNaN(parsedPage) || parsedPage <= 0 ? 1 : parsedPage;
       const finalLimit = isNaN(parsedLimit) || parsedLimit <= 0 ? 10 : parsedLimit;
 
+      // Students can only view classes they are enrolled in
+      let filterStudentId = studentId as string;
+      if (req.user?.role === 'student') {
+        filterStudentId = req.user.id;
+      }
+
       const classesData = await classService.getClasses({
         page: finalPage,
         limit: finalLimit,
@@ -39,7 +45,7 @@ export class ClassController {
         sortOrder: sortOrder as "asc" | "desc",
         subjectId: subjectId ? Number(subjectId) : undefined,
         teacherId: teacherId as string,
-        studentId: studentId as string,
+        studentId: filterStudentId,
         status: status as "active" | "inactive" | "archived"
       });
 
@@ -61,6 +67,19 @@ export class ClassController {
     try {
       const { id } = req.params;
       const classRecord = await classService.getClassById(Number(id));
+
+      // Students can only view classes they are enrolled in
+      if (req.user?.role === 'student') {
+        const isEnrolled = classRecord.enrollments?.some(e => e.studentId === req.user?.id);
+        if (!isEnrolled) {
+          return res.status(403).json({
+            success: false,
+            data: null,
+            error: "Forbidden: You are not enrolled in this class"
+          });
+        }
+      }
+
       return res.status(200).json({
         success: true,
         data: classRecord,
@@ -79,7 +98,21 @@ export class ClassController {
     try {
       const { id } = req.params;
       const validatedData = updateClassSchema.parse(req.body);
-      const classRecord = await classService.updateClass(Number(id), validatedData);
+      const classId = Number(id);
+
+      // Teachers can only update classes they are assigned to
+      if (req.user?.role === 'teacher') {
+        const classRecord = await classService.getClassById(classId);
+        if (classRecord.teacherId !== req.user.id) {
+          return res.status(403).json({
+            success: false,
+            data: null,
+            error: "Forbidden: You are not the assigned teacher for this class"
+          });
+        }
+      }
+
+      const classRecord = await classService.updateClass(classId, validatedData);
       return res.status(200).json({
         success: true,
         data: classRecord,
@@ -122,17 +155,18 @@ export class ClassController {
   async joinClass(req: Request, res: Response) {
     try {
       const { joinCode } = joinClassSchema.parse(req.body);
-      const studentId = req.body.studentId || req.headers['x-student-id'] || req.headers['x-user-id'];
       
+      // Securely obtain student ID from authenticated session user
+      const studentId = req.user?.id;
       if (!studentId) {
-        return res.status(400).json({
+        return res.status(401).json({
           success: false,
           data: null,
-          error: "Student ID (studentId in body or x-student-id in headers) is required to join a class."
+          error: "Unauthorized: Session required"
         });
       }
 
-      const result = await classService.joinClass(studentId as string, joinCode);
+      const result = await classService.joinClass(studentId, joinCode);
       return res.status(200).json({
         success: true,
         data: result,

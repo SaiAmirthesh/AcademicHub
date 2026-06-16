@@ -4,11 +4,16 @@ import dotenv from 'dotenv';
 import departmentRoutes from "./routes/departmentRoutes";
 import subjectRoutes from "./routes/subjectRoutes";
 import classRoutes from "./routes/classRoutes";
+import securityMiddleware from './middleware/security';
+import { authMiddleware } from './middleware/auth';
+import { toNodeHandler } from 'better-auth/node';
+import { auth } from "./lib/auth";
 
 const app = express();
 const PORT = 3000;
 
 dotenv.config();
+
 
 if(!process.env.FRONTEND_URL){
     throw new Error('FRONTEND_URL is not defined');
@@ -20,12 +25,17 @@ app.use(cors({
     credentials: true
 }));
 
+app.all('/api/auth/*splat',toNodeHandler(auth))
+
 app.use(express.json());
 
-const API_VERSION = 'v1';
-app.use(`/api/${API_VERSION}/departments`, departmentRoutes);
-app.use(`/api/${API_VERSION}/subjects`, subjectRoutes);
-app.use(`/api/${API_VERSION}/classes`, classRoutes);
+app.use(authMiddleware);
+
+app.use(securityMiddleware);
+
+app.use(`/api/departments`, departmentRoutes);
+app.use(`/api/subjects`, subjectRoutes);
+app.use(`/api/classes`, classRoutes);
 
 app.listen(PORT, () => {
     console.log(`Servers is running on port ${PORT}`);

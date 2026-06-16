@@ -14,7 +14,7 @@ A decoupled, high-performance PERN-stack University Management Dashboard that se
 - **Multi-Role Authentication**: Secure role-based routing and protection via Better-Auth & Arcjet.
 - **Departmental Governance**: Organization of subjects and faculties into structured academic branches.
 - **Intelligent Subject Management**: Centralized curriculum creation and workload association.
-- **Dynamic Faculty Directory**: Profiles (Cloudinary uploads), pagination, and schedule tracking for teachers.
+- **Dynamic Faculty Directory**: Profiles, pagination, and schedule tracking for teachers.
 - **Advanced Class Orchestration**: Code-based enrollment via 6-8 digit join codes, capacity limits, and teacher assignments.
 - **Unified Analytics Dashboard**: Real-time stats on enrollment, classes, and analytics.
 - **API Runtime Security**: Protection against bots, DDoS, and spam signups via Arcjet.

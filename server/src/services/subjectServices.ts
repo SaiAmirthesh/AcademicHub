@@ -54,7 +54,7 @@ export class SubjectService {
         return {data,pagination: {page,limit,total,totalPages: Math.ceil(total / limit)}};
     }
 
-    async updateSubject(id: number,data: CreateSubjectInput){
+    async updateSubject(id: number,data: { department_id?: number | undefined; name?: string | undefined; code?: string | undefined; description?: string | undefined }){
         const existingSubject = await db.query.subjects.findFirst({where: eq(subjects.id,id)})
         if (!existingSubject){
             throw new Error("Subject not found");

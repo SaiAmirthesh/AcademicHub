@@ -14,7 +14,6 @@ export const user = pgTable("user", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
-  image: text("image"),
   role: text("role", { enum: ["admin", "teacher", "student"] }).notNull().default("student"),
   departmentId: integer("department_id").references(() => departments.id, { onDelete: "restrict" }),
   createdAt: timestamp("created_at").notNull(),
@@ -167,7 +166,6 @@ export const authProvider: AuthProvider = {
     return {
       id: session.user.id,
       name: session.user.name,
-      avatar: session.user.image,
       email: session.user.email,
     };
   },

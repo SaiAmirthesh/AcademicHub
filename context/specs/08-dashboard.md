@@ -37,7 +37,7 @@ Unified landing page (`src/pages/dashboard/index.tsx`) that dynamically mounts w
 - **Weekly Schedule Card**: A timetable component highlighting teaching time windows.
 
 ### C. Student Dashboard Widgets
-- **Student Profile**: Cloudinary avatar picture and details.
+- **Student Profile**: Profile summary and details.
 - **Timetable Calendar**: Grid display of the current week showing timeslots for all enrolled subjects.
 - **Join Class Widget**: Simple card with a text input for pasting join codes.
 - **Enrolled Classes Deck**: Layout of active classes with names, subjects, and instructor names.
