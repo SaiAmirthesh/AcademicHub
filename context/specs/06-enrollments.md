@@ -1,2 +1,0 @@
-# Enrollments
-Student-course relationships.

@@ -1,10 +1,9 @@
 # Context Manager
 
 ## Active Agents
-- solution-architect
 - frontend-developer
 - backend-security-coder
-- database-engineer
+- debugger 
 
 ## Current Focus
 Planning
@@ -12,4 +11,4 @@ Planning
 ## Ownership
 Frontend -> frontend-developer
 Backend -> backend-security-coder
-Database -> database-engineer
+Any Error in Functionality -> debugger
