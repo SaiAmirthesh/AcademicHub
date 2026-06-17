@@ -14,9 +14,7 @@ export const createStudentSchema = z.object({
     departmentId: z
         .number()
         .int()
-        .positive()
-        .optional()
-        .nullable(),
+        .positive(),
 });
 
 export const updateStudentSchema = z.object({

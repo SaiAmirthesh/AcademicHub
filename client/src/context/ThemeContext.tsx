@@ -1,16 +1,14 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 
 export type ColorTheme =
-  | "slate"
-  | "zinc"
-  | "indigo"
-  | "violet"
-  | "emerald"
-  | "rose"
-  | "amber"
-  | "orange"
-  | "cyan"
-  | "red"
+  | "supabase"
+  | "amber-minimal"
+  | "amethyst-haze"
+  | "modern-minimalism"
+  | "claude"
+  | "graphite"
+  | "vintage-paper"
+  | "claymorphism"
 
 export type ThemeMode = "light" | "dark"
 
@@ -25,7 +23,9 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<ColorTheme>(() => {
-    return (localStorage.getItem("app-color-theme") as ColorTheme) || "slate"
+    const stored = localStorage.getItem("app-color-theme")
+    if (stored === "vercel") return "modern-minimalism"
+    return (stored as ColorTheme) || "modern-minimalism"
   })
 
   const [mode, setModeState] = useState<ThemeMode>(() => {
@@ -37,20 +37,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     // Remove all old theme classes
     const themes: ColorTheme[] = [
-      "slate",
-      "zinc",
-      "indigo",
-      "violet",
-      "emerald",
-      "rose",
-      "amber",
-      "orange",
-      "cyan",
-      "red",
+      "supabase",
+      "amber-minimal",
+      "amethyst-haze",
+      "modern-minimalism",
+      "claude",
+      "graphite",
+      "vintage-paper",
+      "claymorphism"
     ]
     themes.forEach((t) => {
       root.classList.remove(`theme-${t}`)
     })
+    // Also remove legacy name just in case
+    root.classList.remove("theme-vercel")
 
     // Add new theme class
     root.classList.add(`theme-${theme}`)

@@ -1,14 +1,31 @@
 import React, { useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { authClient } from "../../lib/authClient.js"
+import { useAuth } from "../../context/AuthContext"
 import { School, AlertCircle } from "lucide-react"
 
 export const Login: React.FC = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [role, setRole] = useState<"student" | "teacher" | "admin">("student")
+  const [email, setEmail] = useState("student@university.edu")
+  const [password, setPassword] = useState("Password123")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const { refresh } = useAuth()
+
+  const handleRoleSelect = (selectedRole: "student" | "teacher" | "admin") => {
+    setRole(selectedRole)
+    if (selectedRole === "student") {
+      setEmail("student@university.edu")
+      setPassword("Password123")
+    } else if (selectedRole === "teacher") {
+      setEmail("teacher@university.edu")
+      setPassword("Password123")
+    } else if (selectedRole === "admin") {
+      setEmail("admin@university.edu")
+      setPassword("Password123")
+    }
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -16,36 +33,22 @@ export const Login: React.FC = () => {
     setLoading(true)
 
     try {
-      const { error: signInError } = await authClient.signIn.email({
+      const response = await authClient.signIn.email({
         email: email.trim(),
         password,
       })
 
-      if (signInError) {
-        setError(signInError.message || "Invalid credentials")
+      if (response.error) {
+        setError(response.error.message || "Invalid credentials")
       } else {
-        navigate("/")
-      }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleQuickLogin = async (roleEmail: string) => {
-    setError(null)
-    setLoading(true)
-    try {
-      const { error: signInError } = await authClient.signIn.email({
-        email: roleEmail,
-        password: "Password123",
-      })
-
-      if (signInError) {
-        setError(signInError.message || "Invalid credentials")
-      } else {
-        navigate("/")
+        const { data: session } = await authClient.getSession()
+        if (session && session.user && (session.user as any).role === role) {
+          await refresh()
+          navigate("/")
+        } else {
+          await authClient.signOut()
+          setError(`Invalid credentials. Registered role does not match selected role: ${role}`)
+        }
       }
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred")
@@ -55,16 +58,16 @@ export const Login: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-left">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+    <div className="min-h-screen bg-background flex flex-col justify-center py-6 sm:px-6 lg:px-8 text-left">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center">
         <div className="flex justify-center items-center gap-3">
-          <School className="h-10 w-10 text-primary animate-pulse" />
-          <span className="text-3xl font-extrabold tracking-tight">AcademicHub</span>
+          <School className="h-8 w-8 text-primary animate-pulse" />
+          <span className="text-2xl font-extrabold tracking-tight">AcademicHub</span>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-foreground">
+        <h2 className="mt-4 text-center text-2xl font-bold tracking-tight text-foreground">
           Sign in to your account
         </h2>
-        <p className="mt-2 text-center text-sm text-muted-foreground">
+        <p className="mt-1 text-center text-sm text-muted-foreground">
           Or{" "}
           <Link to="/register" className="font-semibold text-primary hover:underline">
             register as a new student
@@ -72,16 +75,38 @@ export const Login: React.FC = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-card py-8 px-4 border shadow-sm sm:rounded-xl sm:px-10">
+      <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="bg-card py-5 px-4 border shadow-sm sm:rounded-xl sm:px-6">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 shrink-0" />
+            <div className="mb-3 p-2.5 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleLogin}>
+          <form className="space-y-4" onSubmit={handleLogin}>
+            <div>
+              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                Select Your Role
+              </label>
+              <div className="flex bg-muted/40 p-1 rounded-xl border border-border/85 gap-1 shadow-inner">
+                {(["student", "teacher", "admin"] as const).map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => handleRoleSelect(r)}
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer capitalize ${
+                      role === r
+                        ? "bg-primary text-primary-foreground shadow-sm scale-[1.01]"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
+                    }`}
+                  >
+                    {r === "admin" ? "Admin" : r}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-foreground">
                 Email address
@@ -92,7 +117,7 @@ export const Login: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                className="mt-1 block w-full px-3 py-1.5 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
               />
             </div>
 
@@ -106,48 +131,18 @@ export const Login: React.FC = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                className="mt-1 block w-full px-3 py-1.5 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 transition-all cursor-pointer"
+              className="w-full py-1.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 transition-all cursor-pointer mt-2"
             >
               {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
-
-          {/* Quick Demo Logins */}
-          <div className="mt-8 pt-6 border-t border-border">
-            <span className="block text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">
-              Quick Demo Login
-            </span>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <button
-                onClick={() => handleQuickLogin("admin@university.edu")}
-                className="py-2 px-1 border rounded-lg text-xs font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors cursor-pointer text-center"
-              >
-                Admin
-              </button>
-              <button
-                onClick={() => handleQuickLogin("teacher@university.edu")}
-                className="py-2 px-1 border rounded-lg text-xs font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors cursor-pointer text-center"
-              >
-                Teacher
-              </button>
-              <button
-                onClick={() => handleQuickLogin("student@university.edu")}
-                className="py-2 px-1 border rounded-lg text-xs font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors cursor-pointer text-center"
-              >
-                Student
-              </button>
-            </div>
-            <p className="mt-2 text-[10px] text-center text-muted-foreground">
-              Preset password: <code className="bg-muted px-1 rounded">Password123</code>
-            </p>
-          </div>
         </div>
       </div>
     </div>

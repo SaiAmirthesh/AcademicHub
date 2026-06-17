@@ -6,7 +6,7 @@
 - debugger 
 
 ## Current Focus
-Planning
+Visual Revamp Completed
 
 ## Ownership
 Frontend -> frontend-developer

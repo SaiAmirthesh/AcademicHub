@@ -1,17 +1,17 @@
-import React, { useState } from "react"
+import React from "react"
 import { BrowserRouter, Routes, Route, Outlet, useNavigate, Link, Navigate } from "react-router-dom"
 import { ThemeProvider } from "./context/ThemeContext"
-import { School, LayoutDashboard, Lock, Mail } from "lucide-react"
+import { School, LayoutDashboard, Layers, BookOpen, Users, GraduationCap, Sliders } from "lucide-react"
 
 // Contexts & Client
 import { AuthProvider, useAuth } from "./context/AuthContext"
-import { authClient } from "./lib/authClient"
 
 // Routing Components
 import { ProtectedRoute } from "./components/ProtectedRoute"
 
 // Page Components
 import { LandingPage } from "./pages/LandingPage"
+import { Login } from "./pages/auth/Login"
 import { Register } from "./pages/auth/Register"
 import { Dashboard } from "./pages/dashboard/Dashboard"
 import { Departments } from "./pages/departments/Departments"
@@ -19,124 +19,7 @@ import { Subjects } from "./pages/subjects/Subjects"
 import { Teachers } from "./pages/teachers/Teachers"
 import { Students } from "./pages/students/Students"
 import { Classes } from "./pages/classes/Classes"
-
-const Login: React.FC = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [role, setRole] = useState<"admin" | "teacher" | "student">("student")
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
-  const { refresh } = useAuth()
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
-
-    try {
-      const response = await authClient.signIn.email({
-        email,
-        password,
-      })
-
-      if (response.error) {
-        setError(response.error.message || "Invalid credentials")
-      } else {
-        const { data: session } = await authClient.getSession()
-        if (session && session.user && (session.user as any).role === role) {
-          await refresh()
-          navigate("/")
-        } else {
-          await authClient.signOut()
-          setError(`Invalid credentials. Registered role does not match selected role: ${role}`)
-        }
-      }
-    } catch (err: any) {
-      setError(err.message || "Something went wrong")
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
-      <div className="w-full max-w-md p-8 bg-card border rounded-xl shadow-md space-y-6">
-        <div className="text-center space-y-2">
-          <School className="h-10 w-10 text-primary mx-auto" />
-          <h1 className="text-2xl font-bold tracking-tight">Sign In to AcademicHub</h1>
-          <p className="text-sm text-muted-foreground">Enter your credentials to access your dashboard</p>
-        </div>
-
-        {error && <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg text-left">{error}</div>}
-
-        <form onSubmit={handleLogin} className="space-y-4 text-left">
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@university.edu"
-                className="w-full pl-9 pr-4 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full pl-9 pr-4 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label htmlFor="login-role" className="text-sm font-medium">Sign In As</label>
-            <select
-              id="login-role"
-              value={role}
-              onChange={(e) => setRole(e.target.value as "admin" | "teacher" | "student")}
-              className="w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-            >
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-              <option value="admin">Administrator</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 bg-primary text-primary-foreground font-medium rounded-lg text-sm hover:opacity-90 transition-opacity disabled:opacity-50 cursor-pointer"
-          >
-            {loading ? "Signing In..." : "Sign In"}
-          </button>
-        </form>
-
-        <div className="text-center space-y-2">
-          <p className="text-xs text-muted-foreground">Demo Admin: admin@hub.com / admin123</p>
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/register" className="font-semibold text-primary hover:underline">
-              Register here
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
+import { Profile } from "./pages/Profile"
 
 const Layout: React.FC = () => {
   const { user, logout } = useAuth()
@@ -148,56 +31,97 @@ const Layout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground flex flex-col h-screen overflow-hidden">
       {/* Top navbar */}
-      <header className="border-b bg-card py-4 px-6 flex justify-between items-center shadow-xs">
+      <header className="border-b bg-card py-4 px-6 flex justify-between items-center shadow-xs shrink-0 z-10">
         <div className="flex items-center gap-3">
           <School className="h-6 w-6 text-primary" />
           <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-primary">
             AcademicHub
           </span>
         </div>
-        <nav className="flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium text-primary flex items-center gap-1 hover:opacity-80 transition-opacity">
-            <LayoutDashboard className="h-4 w-4" /> Dashboard
-          </Link>
-
-          {user?.role === "admin" && (
-            <>
-              <Link to="/departments" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Departments
-              </Link>
-              <Link to="/subjects" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Subjects
-              </Link>
-              <Link to="/teachers" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-                Teachers
-              </Link>
-            </>
-          )}
-
-          {user?.role !== "student" && (
-            <Link to="/students" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-              Students
-            </Link>
-          )}
-
-          <Link to="/classes" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
-            Classes
-          </Link>
-        </nav>
         <button
           onClick={handleLogout}
-          className="px-3 py-1.5 text-xs font-semibold border rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors"
+          className="px-3 py-1.5 text-xs font-semibold border rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
         >
           Sign Out
         </button>
       </header>
 
-      {/* Content wrapper */}
-      <main className="flex-1 flex flex-col bg-background/50">
-        <Outlet />
-      </main>
+      {/* Main workspace containing Sidebar and Content */}
+      <div className="flex-1 flex flex-row min-h-0 overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 border-r bg-card p-4 flex flex-col gap-1.5 shrink-0 overflow-y-auto">
+          <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground px-3 mb-2 block">
+            Navigation Menu
+          </span>
+
+          <Link
+            to="/"
+            className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+          >
+            <LayoutDashboard className="h-4.5 w-4.5 text-primary" />
+            <span>Dashboard</span>
+          </Link>
+
+          {user?.role === "admin" && (
+            <>
+              <Link
+                to="/departments"
+                className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+              >
+                <Layers className="h-4.5 w-4.5 text-primary" />
+                <span>Departments</span>
+              </Link>
+              <Link
+                to="/subjects"
+                className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+              >
+                <BookOpen className="h-4.5 w-4.5 text-primary" />
+                <span>Subjects</span>
+              </Link>
+              <Link
+                to="/teachers"
+                className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+              >
+                <School className="h-4.5 w-4.5 text-primary" />
+                <span>Teachers</span>
+              </Link>
+            </>
+          )}
+
+          {user?.role !== "student" && (
+            <Link
+              to="/students"
+              className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+            >
+              <Users className="h-4.5 w-4.5 text-primary" />
+              <span>Students</span>
+            </Link>
+          )}
+
+          <Link
+            to="/classes"
+            className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+          >
+            <GraduationCap className="h-4.5 w-4.5 text-primary" />
+            <span>Classes</span>
+          </Link>
+
+          <Link
+            to="/profile"
+            className="flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+          >
+            <Sliders className="h-4.5 w-4.5 text-primary" />
+            <span>Profile</span>
+          </Link>
+        </aside>
+
+        {/* Content Outlet */}
+        <main className="flex-1 flex flex-col bg-background/40 overflow-y-auto min-w-0">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }
@@ -226,6 +150,7 @@ function App() {
                 <Route path="/teachers" element={<Teachers />} />
                 <Route path="/students" element={<Students />} />
                 <Route path="/classes" element={<Classes />} />
+                <Route path="/profile" element={<Profile />} />
               </Route>
             </Route>
             <Route path="/login" element={<Login />} />

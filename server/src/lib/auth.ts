@@ -16,12 +16,34 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    plugins: [
+        {
+            id: "validation-plugin",
+            hooks: {
+                before: [
+                    {
+                        matcher: (context) => context.path === "/sign-up/email",
+                        handler: async (context) => {
+                            const body = context.body as any;
+                            if (body) {
+                                if (body.role === "admin") {
+                                    throw new Error("Admin registration is restricted");
+                                }
+                                if (!body.departmentId) {
+                                    throw new Error("Department is required");
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ],
     user: {
         additionalFields: {
             role: {
                 type: "string",
                 required: true,
-                default: 'student',
                 input: true,     
             },
             departmentId: {

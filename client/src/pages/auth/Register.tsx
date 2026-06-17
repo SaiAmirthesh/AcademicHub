@@ -41,6 +41,12 @@ export const Register: React.FC = () => {
     setError(null)
     setLoading(true)
 
+    if (role !== "admin" && !departmentId) {
+      setError("Department is required.")
+      setLoading(false)
+      return
+    }
+
     try {
       const { error: signUpError } = await authClient.signUp.email({
         email: email.trim().toLowerCase(),
@@ -63,16 +69,16 @@ export const Register: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-left">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+    <div className="min-h-screen bg-background flex flex-col justify-center py-6 sm:px-6 lg:px-8 text-left">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm text-center">
         <div className="flex justify-center items-center gap-3">
-          <School className="h-10 w-10 text-primary" />
-          <span className="text-3xl font-extrabold tracking-tight">AcademicHub</span>
+          <School className="h-8 w-8 text-primary" />
+          <span className="text-2xl font-extrabold tracking-tight">AcademicHub</span>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-foreground">
+        <h2 className="mt-4 text-center text-2xl font-bold tracking-tight text-foreground">
           Create your account
         </h2>
-        <p className="mt-2 text-center text-sm text-muted-foreground">
+        <p className="mt-1 text-center text-sm text-muted-foreground">
           Or{" "}
           <Link to="/login" className="font-semibold text-primary hover:underline">
             sign in to your account
@@ -80,16 +86,40 @@ export const Register: React.FC = () => {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-card py-8 px-4 border shadow-sm sm:rounded-xl sm:px-10">
+      <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="bg-card py-5 px-4 border shadow-sm sm:rounded-xl sm:px-6">
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
-              <AlertCircle className="h-5 w-5 shrink-0" />
+            <div className="mb-3 p-2.5 rounded-lg bg-destructive/10 text-destructive text-sm flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          <form className="space-y-6" onSubmit={handleRegister}>
+          <form className="space-y-4" onSubmit={handleRegister}>
+            <div>
+              <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+                Registering As
+              </label>
+              <div className="flex bg-muted/40 p-1 rounded-xl border border-border/85 gap-1 shadow-inner">
+                {(["student", "teacher"] as const).map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => {
+                      setRole(r)
+                    }}
+                    className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 cursor-pointer capitalize ${
+                      role === r
+                        ? "bg-primary text-primary-foreground shadow-sm scale-[1.01]"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
+                    }`}
+                  >
+                    {r}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-foreground">
                 Full Name
@@ -100,7 +130,7 @@ export const Register: React.FC = () => {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                className="mt-1 block w-full px-3 py-1.5 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
               />
             </div>
 
@@ -114,7 +144,7 @@ export const Register: React.FC = () => {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                className="mt-1 block w-full px-3 py-1.5 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
               />
             </div>
 
@@ -129,40 +159,21 @@ export const Register: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Min 8 characters"
-                className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                className="mt-1 block w-full px-3 py-1.5 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
               />
-            </div>
-
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-foreground">
-                Select Your Role
-              </label>
-              <select
-                id="role"
-                value={role}
-                onChange={(e) => {
-                  const val = e.target.value as "admin" | "teacher" | "student"
-                  setRole(val)
-                  if (val === "admin") setDepartmentId("")
-                }}
-                className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-              >
-                <option value="student">Student</option>
-                <option value="teacher">Teacher</option>
-                <option value="admin">Administrator</option>
-              </select>
             </div>
 
             {role !== "admin" && (
               <div>
                 <label htmlFor="department" className="block text-sm font-medium text-foreground">
-                  Department (Optional)
+                  Department (Required)
                 </label>
                 <select
                   id="department"
+                  required
                   value={departmentId}
                   onChange={(e) => setDepartmentId(e.target.value)}
-                  className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
+                  className="mt-1 block w-full px-3 py-1.5 border rounded-lg bg-background text-sm focus:ring-2 focus:ring-primary focus:outline-none"
                 >
                   <option value="">Select a department</option>
                   {departmentsList.map((dept) => (
@@ -177,7 +188,7 @@ export const Register: React.FC = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-primary-foreground bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 transition-all cursor-pointer"
+              className="w-full py-1.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-primary-foreground bg-primary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 transition-all cursor-pointer mt-2"
             >
               {loading ? "Registering..." : "Register"}
             </button>

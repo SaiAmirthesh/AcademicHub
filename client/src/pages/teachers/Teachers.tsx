@@ -99,6 +99,12 @@ export const Teachers: React.FC = () => {
     e.preventDefault()
     setError(null)
     setMessage(null)
+
+    if (!departmentId) {
+      setError("Department is required.")
+      return
+    }
+
     try {
       const response = await fetch("http://localhost:3000/api/teachers", {
         method: "POST",
@@ -109,7 +115,7 @@ export const Teachers: React.FC = () => {
           name,
           email: email.trim().toLowerCase(),
           password,
-          departmentId: departmentId ? Number(departmentId) : null
+          departmentId: Number(departmentId)
         })
       })
       const resJson = await response.json()
@@ -230,8 +236,9 @@ export const Teachers: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-foreground">Department (Optional)</label>
+              <label className="block text-sm font-medium text-foreground">Department (Required)</label>
               <select
+                required
                 value={departmentId}
                 onChange={(e) => setDepartmentId(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary"

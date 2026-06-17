@@ -219,11 +219,28 @@ export class ClassService {
   }
 
   async joinClass(studentId: string, joinCode: string) {
+    const student = await db.query.user.findFirst({
+      where: eq(user.id, studentId)
+    });
+    if (!student) {
+      throw new Error("Student not found");
+    }
+    if (!student.departmentId) {
+      throw new Error("You must belong to a department to join classes");
+    }
+
     const classRecord = await db.query.classes.findFirst({
-      where: and(eq(classes.joinCode, joinCode.toUpperCase()), eq(classes.status, "active"))
+      where: and(eq(classes.joinCode, joinCode.toUpperCase()), eq(classes.status, "active")),
+      with: {
+        subject: true
+      }
     });
     if (!classRecord) {
       throw new Error("Class not found or is currently inactive/archived");
+    }
+
+    if (student.departmentId !== classRecord.subject.department_id) {
+      throw new Error("Forbidden: You can only join classes belonging to your department");
     }
 
     const enrollmentCountResult = await db

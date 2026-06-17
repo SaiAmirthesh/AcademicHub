@@ -21,13 +21,15 @@ export class TeacherService {
       throw new Error("Email is already registered");
     }
 
-    if (data.departmentId) {
-      const dept = await db.query.departments.findFirst({
-        where: eq(departments.id, data.departmentId)
-      });
-      if (!dept) {
-        throw new Error("Department not found");
-      }
+    if (!data.departmentId) {
+      throw new Error("Department is required");
+    }
+
+    const dept = await db.query.departments.findFirst({
+      where: eq(departments.id, data.departmentId)
+    });
+    if (!dept) {
+      throw new Error("Department not found");
     }
 
     // Call Better-Auth API to create the user programmatically
@@ -38,7 +40,7 @@ export class TeacherService {
         name: data.name,
         role: "teacher",
         departmentId: data.departmentId ?? undefined,
-      }
+      } as any
     });
 
     if (!result || !result.user) {

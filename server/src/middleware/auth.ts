@@ -14,7 +14,7 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
         name: session.user.name,
         email: session.user.email,
         emailVerified: session.user.emailVerified,
-        role: session.user.role as 'admin' | 'teacher' | 'student',
+        role: (session.user as any).role as 'admin' | 'teacher' | 'student',
         departmentId: (session.user as any).departmentId,
         createdAt: session.user.createdAt,
         updatedAt: session.user.updatedAt,
