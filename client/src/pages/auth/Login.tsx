@@ -17,13 +17,13 @@ export const Login: React.FC = () => {
     setRole(selectedRole)
     if (selectedRole === "student") {
       setEmail("student@edu.in")
-      setPassword("Password123")
+      setPassword("password123")
     } else if (selectedRole === "teacher") {
       setEmail("teacher@edu.in")
-      setPassword("Password123")
+      setPassword("password123")
     } else if (selectedRole === "admin") {
       setEmail("admin@gmail.com")
-      setPassword("Password123")
+      setPassword("password123")
     }
   }
 
