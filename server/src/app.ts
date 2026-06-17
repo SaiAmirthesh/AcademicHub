@@ -28,6 +28,14 @@ app.use(cors({
     credentials: true
 }));
 
+app.post('/api/auth/sign-up/email', (req, res) => {
+    return res.status(403).json({
+        success: false,
+        data: null,
+        error: "Public registration is disabled"
+    });
+});
+
 app.all('/api/auth/*splat',toNodeHandler(auth))
 
 app.use(express.json());

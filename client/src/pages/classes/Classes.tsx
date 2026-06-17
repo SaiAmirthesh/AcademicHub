@@ -87,7 +87,7 @@ export const Classes: React.FC = () => {
 
   useEffect(() => {
     fetchData()
-  }, [user])
+  }, [user?.id, user?.role])
 
   const handleCopyCode = (code: string, id: number) => {
     navigator.clipboard.writeText(code)

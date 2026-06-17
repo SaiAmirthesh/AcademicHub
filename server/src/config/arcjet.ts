@@ -1,4 +1,4 @@
-import arcjet, { shield, detectBot, tokenBucket , slidingWindow} from "@arcjet/node";
+import arcjet, { shield, detectBot } from "@arcjet/node";
 import { isSpoofedBot } from "@arcjet/inspect";
 
 
@@ -17,11 +17,6 @@ const aj = arcjet({
         "CATEGORY:MONITOR", 
         "CATEGORY:PREVIEW", 
       ],
-    }),
-    slidingWindow({
-      mode: "LIVE",
-      interval: '2s', 
-      max: 3, 
     }),
   ],
 });

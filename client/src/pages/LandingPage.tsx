@@ -298,7 +298,7 @@ export const LandingPage: React.FC = () => {
           </Link>
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
             <Link
-              to="/register"
+              to="/login"
               className="px-5 py-2.5 text-sm font-bold rounded-xl bg-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/20 transition-all cursor-pointer block border border-primary/20"
             >
               Get Started
@@ -347,10 +347,10 @@ export const LandingPage: React.FC = () => {
           >
             <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>
               <Link
-                to="/register"
+                to="/login"
                 className="w-full sm:w-auto flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold hover:shadow-xl hover:shadow-primary/30 transition-all cursor-pointer shadow-md"
               >
-                Register Now <ChevronRight className="h-5 w-5" />
+                Access Portal <ChevronRight className="h-5 w-5" />
               </Link>
             </motion.div>
             <motion.div className="w-full sm:w-auto" whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }}>

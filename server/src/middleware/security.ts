@@ -5,6 +5,11 @@ import { RateLimitRole } from '../type';
 
 const securityMiddleware = async( req: Request,res:Response, next:NextFunction) => {
     if(process.env.NODE_ENV==='test') return next();
+
+    // Bypass Arcjet rate limit roundtrips in local development to avoid latency
+    if(process.env.NODE_ENV !== 'production' && process.env.ENABLE_ARCJET_DEV !== 'true') {
+        return next();
+    }
     try{
         const role: RateLimitRole = req.user?.role ?? 'guest';
         let limit: number;

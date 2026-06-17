@@ -111,7 +111,7 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     fetchAnalytics()
-  }, [user])
+  }, [user?.id, user?.role])
 
   // Transform department enrollment data for Recharts Donut chart
   const donutChartData = React.useMemo(() => {

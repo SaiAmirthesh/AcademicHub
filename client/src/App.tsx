@@ -1,4 +1,4 @@
-import React from "react"
+import React, { Suspense, lazy } from "react"
 import { BrowserRouter, Routes, Route, Outlet, useNavigate, Link, Navigate } from "react-router-dom"
 import { ThemeProvider } from "./context/ThemeContext"
 import { School, LayoutDashboard, Layers, BookOpen, Users, GraduationCap, Sliders } from "lucide-react"
@@ -9,17 +9,16 @@ import { AuthProvider, useAuth } from "./context/AuthContext"
 // Routing Components
 import { ProtectedRoute } from "./components/ProtectedRoute"
 
-// Page Components
-import { LandingPage } from "./pages/LandingPage"
-import { Login } from "./pages/auth/Login"
-import { Register } from "./pages/auth/Register"
-import { Dashboard } from "./pages/dashboard/Dashboard"
-import { Departments } from "./pages/departments/Departments"
-import { Subjects } from "./pages/subjects/Subjects"
-import { Teachers } from "./pages/teachers/Teachers"
-import { Students } from "./pages/students/Students"
-import { Classes } from "./pages/classes/Classes"
-import { Profile } from "./pages/Profile"
+// Lazily loaded page components
+const LandingPage = lazy(() => import("./pages/LandingPage").then(module => ({ default: module.LandingPage })))
+const Login = lazy(() => import("./pages/auth/Login").then(module => ({ default: module.Login })))
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard").then(module => ({ default: module.Dashboard })))
+const Departments = lazy(() => import("./pages/departments/Departments").then(module => ({ default: module.Departments })))
+const Subjects = lazy(() => import("./pages/subjects/Subjects").then(module => ({ default: module.Subjects })))
+const Teachers = lazy(() => import("./pages/teachers/Teachers").then(module => ({ default: module.Teachers })))
+const Students = lazy(() => import("./pages/students/Students").then(module => ({ default: module.Students })))
+const Classes = lazy(() => import("./pages/classes/Classes").then(module => ({ default: module.Classes })))
+const Profile = lazy(() => import("./pages/Profile").then(module => ({ default: module.Profile })))
 
 const Layout: React.FC = () => {
   const { user, logout } = useAuth()
@@ -139,24 +138,34 @@ function App() {
     <ThemeProvider>
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            <Route path="/" element={<HomeRouteWrapper />}>
-              <Route path="/" element={<Dashboard />} />
-            </Route>
-            <Route element={<ProtectedRoute />}>
-              <Route element={<Layout />}>
-                <Route path="/departments" element={<Departments />} />
-                <Route path="/subjects" element={<Subjects />} />
-                <Route path="/teachers" element={<Teachers />} />
-                <Route path="/students" element={<Students />} />
-                <Route path="/classes" element={<Classes />} />
-                <Route path="/profile" element={<Profile />} />
+          <Suspense
+            fallback={
+              <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
+                  <span className="text-sm text-muted-foreground font-semibold">Loading page modules...</span>
+                </div>
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<HomeRouteWrapper />}>
+                <Route path="/" element={<Dashboard />} />
               </Route>
-            </Route>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+              <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                  <Route path="/departments" element={<Departments />} />
+                  <Route path="/subjects" element={<Subjects />} />
+                  <Route path="/teachers" element={<Teachers />} />
+                  <Route path="/students" element={<Students />} />
+                  <Route path="/classes" element={<Classes />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Route>
+              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Suspense>
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>

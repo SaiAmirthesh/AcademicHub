@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { authClient } from "../../lib/authClient.js"
 import { useAuth } from "../../context/AuthContext"
 import { School, AlertCircle } from "lucide-react"
@@ -16,13 +16,13 @@ export const Login: React.FC = () => {
   const handleRoleSelect = (selectedRole: "student" | "teacher" | "admin") => {
     setRole(selectedRole)
     if (selectedRole === "student") {
-      setEmail("student@university.edu")
+      setEmail("student@edu.in")
       setPassword("Password123")
     } else if (selectedRole === "teacher") {
-      setEmail("teacher@university.edu")
+      setEmail("teacher@edu.in")
       setPassword("Password123")
     } else if (selectedRole === "admin") {
-      setEmail("admin@university.edu")
+      setEmail("admin@gmail.com")
       setPassword("Password123")
     }
   }
@@ -67,12 +67,6 @@ export const Login: React.FC = () => {
         <h2 className="mt-4 text-center text-2xl font-bold tracking-tight text-foreground">
           Sign in to your account
         </h2>
-        <p className="mt-1 text-center text-sm text-muted-foreground">
-          Or{" "}
-          <Link to="/register" className="font-semibold text-primary hover:underline">
-            register as a new student
-          </Link>
-        </p>
       </div>
 
       <div className="mt-5 sm:mx-auto sm:w-full sm:max-w-sm">
