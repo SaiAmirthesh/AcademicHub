@@ -417,59 +417,6 @@ export const Dashboard: React.FC = () => {
                 </div>
               </motion.div>
             </div>
-
-            {/* Second Row: System Alerts & Security Profile */}
-            <div className="grid gap-6 lg:grid-cols-3">
-              {/* System Alerts */}
-              <motion.div variants={itemVariants} className="lg:col-span-1 p-6 bg-card border rounded-2xl shadow-xs space-y-4">
-                <h2 className="text-base font-bold flex items-center gap-2">
-                  <Bell className="h-4 w-4 text-primary" /> Live Alerts & Audit
-                </h2>
-                <div className="space-y-3">
-                  {mockAlerts.map((alert) => (
-                    <div key={alert.id} className="flex gap-3 text-xs p-2.5 rounded-lg bg-muted/55 border border-border/80 text-left items-start">
-                      <Activity className="h-4 w-4 shrink-0 mt-0.5 text-primary" />
-                      <div>
-                        <p className="font-semibold text-foreground">{alert.message}</p>
-                        <span className={`inline-block text-[9px] font-bold px-1.5 py-0.5 rounded mt-1 ${alert.color}`}>
-                          {alert.type.toUpperCase()}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-
-              {/* Global Security Details */}
-              <motion.div variants={itemVariants} className="lg:col-span-2 p-6 bg-card border rounded-2xl shadow-xs space-y-4 flex flex-col justify-between">
-                <div>
-                  <h2 className="text-base font-bold flex items-center gap-2 pb-3 border-b">
-                    <ShieldAlert className="h-4.5 w-4.5 text-primary" /> Security Shield Profile
-                  </h2>
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                    <div className="flex justify-between items-center text-xs p-3 bg-muted/30 border rounded-xl">
-                      <span className="text-muted-foreground font-semibold">Arcjet Bot Mitigation:</span>
-                      <span className="font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">Active</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs p-3 bg-muted/30 border rounded-xl">
-                      <span className="text-muted-foreground font-semibold">Rate Limiter Limit:</span>
-                      <span className="font-extrabold text-foreground bg-primary/10 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">120 req/min</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs p-3 bg-muted/30 border rounded-xl">
-                      <span className="text-muted-foreground font-semibold">JWT Better-Auth Shield:</span>
-                      <span className="font-bold text-indigo-400 bg-indigo-500/10 px-2.5 py-0.5 rounded-full border border-indigo-500/20">Enabled</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs p-3 bg-muted/30 border rounded-xl">
-                      <span className="text-muted-foreground font-semibold">PostgreSQL Host:</span>
-                      <span className="font-mono text-[10px] text-muted-foreground truncate max-w-[150px] bg-muted/50 px-2 py-0.5 rounded border border-border">Neon Serverless</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="pt-4 border-t text-[11px] text-muted-foreground font-semibold flex items-center gap-1.5 bg-muted/20 p-3 rounded-xl mt-4">
-                  🔒 System data is verified secure by Arcjet middleware logic.
-                </div>
-              </motion.div>
-            </div>
           </div>
         )}
 
